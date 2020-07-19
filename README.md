@@ -1,10 +1,14 @@
-# Azhar_bot
-Azhar's code in here
+# Margot
+This is the main repository for the Convobot poroject.
 
-To install the speech generator espeak, run one of the following commands accordingly:
+Instructions on how to setup Margot chatbot on your linux can be found in the dir Margot_with_GUI/
+
+To install and test the speech generator espeak, run one of the following commands accordingly:
 
     sudo pacman -Syu espeak
     
     or
     
     sudo apt-get install espeak
+
+a simple demonstration can be found inside the dir espeak/
