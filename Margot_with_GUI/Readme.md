@@ -18,9 +18,9 @@ To use the code you need to install some libraries in a virtual environment:
     
     pip install pickle
    
- Also some other os packages:
+ Also some other packages:
  
- for pacman:
+ for Arch-based os:
  
     sudo pacman -Syu python-pyaudio
     
