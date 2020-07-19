@@ -1,5 +1,5 @@
 # Margot
-This is the main repository for the Convobot poroject.
+This is the main repository for the Convobot project.
 
 Instructions on how to setup Margot chatbot on your linux can be found in the dir Margot_with_GUI/
 
