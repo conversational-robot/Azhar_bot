@@ -10,34 +10,38 @@ import shutil
 import itertools
 import pickle
 import playsound
+import time
 
-# class SpeechGenerator:
-#     def __init__(self, fromFilePath=None, savespeech=False):
-#         self.file = fromFilePath
-#         self.savespeech = savespeech
+t_begin=None
+t_end=None
 
-#     def speak(self, text="No text was found"):
-#         if self.file==None:
-#             if self.savespeech==False:
-#                 if type(text)!=str:
-#                     raise ValueError()
-#                     print("The text given was not understood")
-#                 Command = "bash glados.sh"+" "+"\""+text+"\""
-#                 os.system(Command)
-#             else:
-#                 Command = "bash glados.sh"+" "+"\""+text+"\""
-#                 if type(Command)!=str:
-#                     raise ValueError()
-#                     print("The text given was not understood")
-#                 os.system(Command)
-#         else:
-#             with open(self.file, 'r') as File:
-#                 text = File.read()
-#             if type(text)!=str:
-#                     raise ValueError()
-#                     print("The text given was not understood")
-#             Command = "bash glados.sh"+" "+"\""+text+"\""
-#             os.system(Command)
+class SpeechGenerator:
+    def __init__(self, fromFilePath=None, savespeech=False):
+        self.file = fromFilePath
+        self.savespeech = savespeech
+
+    def speak(self, text="No text was found"):
+        if self.file==None:
+            if self.savespeech==False:
+                if type(text)!=str:
+                    raise ValueError()
+                    print("The text given was not understood")
+                Command = "bash glados.sh"+" "+"\""+text+"\""
+                os.system(Command)
+            else:
+                Command = "bash glados.sh"+" "+"\""+text+"\""
+                if type(Command)!=str:
+                    raise ValueError()
+                    print("The text given was not understood")
+                os.system(Command)
+        else:
+            with open(self.file, 'r') as File:
+                text = File.read()
+            if type(text)!=str:
+                    raise ValueError()
+                    print("The text given was not understood")
+            Command = "bash glados.sh"+" "+"\""+text+"\""
+            os.system(Command)
 
 def preprocess_sentence(s):
     s = unicode_to_ascii(s.lower().strip())
@@ -221,12 +225,14 @@ def responder(input_raw):
 
 import speech_recognition as sr  
 
-def speechInput(): 
+def speechInput():
     r = sr.Recognizer()  
     with sr.Microphone() as source:  
         print("Please wait. Calibrating microphone...")  
         r.adjust_for_ambient_noise(source, duration=1)  
-        print("Say something!")  
+        print("Say something!")
+        global t_begin
+        t_begin = time.time() 
         audio = r.listen(source)   
     try: 
         speech= r.recognize_google(audio)
@@ -242,31 +248,43 @@ from time import sleep
 import os
 import pyglet
 
-def speakResponse(response):
-    tts = gTTS(text=response, lang='en',slow=True)
-    filename = '/tmp/temp.mp3'
-    tts.save(filename)
-
-    music = pyglet.media.load(filename, streaming=False)
-    music.play()
-
-    sleep(music.duration) 
-    os.remove(filename)
-
 # def speakResponse(response):
-#     speak = SpeechGenerator()
-#     speak.speak(response)
+#     tts = gTTS(text=response, lang='en',slow=True)
+#     filename = '/tmp/temp.mp3'
+#     tts.save(filename)
+
+#     music = pyglet.media.load(filename, streaming=False)
+#     music.play()
+
+#     sleep(music.duration) 
+#     os.remove(filename)
+
+def speakResponse(response):
+    speak = SpeechGenerator()
+    speak.speak(response)
 
 def call():
     speech=speechInput()
+    global t_end
+    t_end = time.time()
+    print("latency:",t_end-t_begin)
     if speech=="sing a song":
+        reply.configure(text="playing")
         playsound.playsound('still_alive.mp3')
     elif speech == "what is your name":
         response="I'm Margot"
+        reply.configure(text=response)
+        speakResponse(response)
+    elif speech == "hello":
+        response="hello, stranger!"
+        reply.configure(text=response)
         speakResponse(response)
     else:
         response=responder(speech)
+        reply.configure(text=response)
         speakResponse(response)
+    
+        
 
 
 
@@ -278,7 +296,11 @@ welcomelabel.pack(side=TOP)
 
 introlabel = Label(window, text = "Press the button to speak to me.\n Don't be stupid, or you will be missed. :)", font=("Arial",15))
 introlabel.pack(side=TOP)
+
 window.geometry('640x350')
+
+reply = Label(window, text="No reply yet", font=("Arial",20))
+reply.pack(side=TOP)
 
 speakbutton = Button(window, text="Speak to margot",font=("arial,10"),height=10, bg='red',fg='yellow', command=call)
 speakbutton.pack(side=BOTTOM)
