@@ -11,4 +11,4 @@ To install and test the speech generator espeak, run one of the following comman
     
     sudo apt-get install espeak
 
-a simple demonstration can be found inside the dir espeak/
+a simple application of espeak can be found inside the dir espeak/
